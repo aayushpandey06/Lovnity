@@ -1,5 +1,3 @@
-version: "3.9"
-
 services:
   db:
     image: postgres:16
@@ -13,6 +11,27 @@ services:
       - "5432:5432"
     volumes:
       - lovnity_data:/var/lib/postgresql/data
+
+  server:
+    build: ./server
+    container_name: lovnity-server
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "3001:3001"
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/lovnity
+      PORT: 3001
+
+  frontend:
+    image: nginx:alpine
+    container_name: lovnity-frontend
+    restart: always
+    ports:
+      - "8080:80"
+    volumes:
+      - ./Lovnity:/usr/share/nginx/html:ro
 
 volumes:
   lovnity_data:

@@ -1,12 +1,12 @@
 Use the command below in terminal after pull this repo in vs code. System is connected to docker so database of the dummy codes can be accessed.
 
+Just run this first line in terminal
+cd UI
+docker-compose up --build
+Then open your browser and go to:
+http://localhost:8080
 
-docker compose up -d
-docker exec -i lovnity-db psql -U postgres -d lovnity < server/schema.sql
-docker exec -i lovnity-db psql -U postgres -d lovnity < server/seed.sql
-cd server
-npm install
-npm run dev
+
 
 
 And these are the test codes :

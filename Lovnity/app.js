@@ -2,9 +2,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const $ = (s) => document.querySelector(s);
 
   // -----------------------------
-  // CONFIG (local prototype)
+  // CONFIG — works locally AND in Docker
   // -----------------------------
-  const API_BASE = "http://localhost:3001";
+  const API_BASE = window.location.hostname === "localhost"
+    ? "http://localhost:3001"
+    : `http://${window.location.hostname}:3001`;
 
   const UI = {
     panelCode: $("#panelCode"),
@@ -53,7 +55,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <circle cx="40" cy="40" r="38" fill="#e8890c" stroke="white" stroke-width="1.5"/>
         <text x="40" y="36" text-anchor="middle" fill="white" font-size="8" font-family="Arial" font-weight="bold">MEHILÄINEN</text>
         <ellipse cx="40" cy="50" rx="10" ry="7" fill="white" opacity="0.9"/>
-        <circle cx="40" y="46" r="4" fill="#e8890c"/>
+        <circle cx="40" cy="46" r="4" fill="#e8890c"/>
         <line x1="40" y1="28" x2="40" y2="38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
         <line x1="32" y1="32" x2="40" y2="38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
         <line x1="48" y1="32" x2="40" y2="38" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
@@ -115,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       currentCode = code;
 
-      // ✅ UPDATED: If already registered, show real name + partner
       if (data.status === "ok") {
         const partner = attachPartnerAssets(data.partner);
         const profile = data.profile;
@@ -136,13 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
             partner,
           });
 
-          // Override messaging to "welcome back"
           UI.welcomeLine.textContent = "Welcome back — already registered.";
           UI.welcomeTitle.textContent = "Welcome back, " + escapeHtml(profile.firstName) + "! \u{1F497}";
           return;
         }
 
-        // Fallback (should be rare)
         UI.topSubtitle.textContent = "You're all set.";
         UI.welcomeLine.textContent = "Welcome back — already registered.";
         UI.welcomeTitle.textContent = "Welcome back! \u{1F497}";
@@ -172,7 +171,7 @@ document.addEventListener("DOMContentLoaded", () => {
       shake(UI.panelCode);
     } catch (err) {
       enable(UI.codeBtn, "Continue");
-      setMsg(UI.codeMsg, "Could not reach server. Is it running on localhost:3001?", "error");
+      setMsg(UI.codeMsg, "Could not reach server.", "error");
       shake(UI.panelCode);
     }
   }
@@ -240,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
       showWelcome(profile);
     } catch (err) {
       UI.registerForm.querySelector("button[type='submit']")?.removeAttribute("disabled");
-      setMsg(UI.regMsg, "Could not reach server. Is it running on localhost:3001?", "error");
+      setMsg(UI.regMsg, "Could not reach server.", "error");
     }
   });
 
